@@ -47,7 +47,7 @@ jobs:
         run: echo "RELEASE_TAG=$(date +'%d-%m-%Y')" > $GITHUB_ENV
 
       - name: Create Github Release
-        uses: ncpollo/release-action@v1
+        uses: ncipollo/release-action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ env.RELEASE_TAG }}
