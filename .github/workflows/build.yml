@@ -1,0 +1,59 @@
+name: 
+  Build and Release Binary
+
+on: 
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: write
+
+jobs: 
+  build-and-release: 
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: setup go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.x"
+      
+      - name: Build Linux Binaries
+        run: |
+          mkdir -p build
+          GOOS=linux GOARCH=amd64 go mod build -o build/linux-amd64/server main.go
+          GOOS=linux GOARCH=arm64 go mod build -o build/linux-arm64/server main.go
+          cp -r .ssh/ build/linux-amd64/.ssh 
+          cp -r .ssh/ build/linux-arm64/.ssh
+
+      - name: Compress Binaries
+        run: |
+          cd build
+          tar -czvf portfolio-linux-amd64.tar.gz linux-amd64
+          tar -czvf portfolio-linux-arm64.tar.gz linux-arm64 
+      
+      - name: Upload Binary Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: binaries
+          path: build/*.tar.gz
+
+      - name: Generate Release Tag
+        id: generate-tag
+        run: echo "RELEASE_TAG=$(date +'%d-%m-%Y')" > $GITHUB_ENV
+
+      - name: Create Github Release
+        uses: ncpollo/release-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ env.RELEASE_TAG }}
+          name: "Release ${{ env.RELEASE_TAG }}"
+          draft: true
+          artifacts: |
+            build/portfolio-linux-amd64.tar.gz
+            build/portfolio-linux-arm64.tar.gz
+
