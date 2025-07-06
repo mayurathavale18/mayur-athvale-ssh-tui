@@ -141,7 +141,7 @@ I'm fluent in Python, Go, Typescript, Javascript.
 
 	choices := fmt.Sprintf(
 		"%s\n%s",
-		m.subtleStyle.Copy().Foreground(lipgloss.Color("13")).Render("GitHub         https://github.com/mayurthavale18"),
+		m.subtleStyle.Copy().Foreground(lipgloss.Color("13")).Render("GitHub         https://github.com/mayurathavale18"),
 		m.subtleStyle.Copy().Foreground(lipgloss.Color("33")).Render("Linkedin       https://linkedin.com/in/mayurathavale1729"),
 	)
 
