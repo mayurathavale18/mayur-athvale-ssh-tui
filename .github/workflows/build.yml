@@ -25,8 +25,8 @@ jobs:
       - name: Build Linux Binaries
         run: |
           mkdir -p build
-          GOOS=linux GOARCH=amd64 go mod build -o build/linux-amd64/server main.go
-          GOOS=linux GOARCH=arm64 go mod build -o build/linux-arm64/server main.go
+          GOOS=linux GOARCH=amd64 go build -o build/linux-amd64/server main.go
+          GOOS=linux GOARCH=arm64 go build -o build/linux-arm64/server main.go
           cp -r .ssh/ build/linux-amd64/.ssh 
           cp -r .ssh/ build/linux-arm64/.ssh
 
