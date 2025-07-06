@@ -37,7 +37,7 @@ jobs:
           tar -czvf portfolio-linux-arm64.tar.gz linux-arm64 
       
       - name: Upload Binary Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: binaries
           path: build/*.tar.gz
