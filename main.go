@@ -23,7 +23,7 @@ import (
 
 const (
 	host = "0.0.0.0"
-	port = "224"
+	port = "22"
 )
 
 func main() {
