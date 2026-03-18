@@ -1,1 +1,19 @@
-*.yml.un~
+# Build
+build/
+ssh-portfolio
+
+# SSH keys - generate locally, never commit
+.ssh/
+
+# Editor backup files
+*.un~
+*.swp
+*.swo
+*~
+
+# Database
+data/
+*.db
+
+# OS
+.DS_Store

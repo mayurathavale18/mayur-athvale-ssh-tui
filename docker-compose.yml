@@ -1,0 +1,13 @@
+services:
+  portfolio:
+    build: .
+    ports:
+      - "2222:22"
+    volumes:
+      - ssh-keys:/app/.ssh
+      - analytics-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  ssh-keys:
+  analytics-data:

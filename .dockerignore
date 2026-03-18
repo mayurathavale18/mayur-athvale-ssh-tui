@@ -1,0 +1,10 @@
+.git
+.github
+.claude
+.ssh
+build/
+data/
+*.db
+*.md
+!README.md
+deploy/terraform

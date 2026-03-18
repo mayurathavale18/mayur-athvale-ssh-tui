@@ -1,52 +1,57 @@
-name: 
-  Build and Release Binary
+name: Build and Release
 
-on: 
+on:
   push:
     branches:
       - master
 
 permissions:
   contents: write
+  packages: write
 
-jobs: 
-  build-and-release: 
+jobs:
+  test:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: setup go
-        uses: actions/setup-go@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
         with:
-          go-version: "1.x"
-      
-      - name: Build Linux Binaries
+          go-version: "1.25"
+      - run: go test ./... -v
+      - run: go vet ./...
+
+  build-and-release:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.25"
+
+      - name: Build Linux binaries
         run: |
           mkdir -p build
-          GOOS=linux GOARCH=amd64 go build -o build/linux-amd64/server main.go
-          GOOS=linux GOARCH=arm64 go build -o build/linux-arm64/server main.go
-          cp -r .ssh/ build/linux-amd64/.ssh 
-          cp -r .ssh/ build/linux-arm64/.ssh
+          GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o build/linux-amd64/ssh-portfolio ./cmd/server
+          GOOS=linux GOARCH=arm64 go build -ldflags="-s -w" -o build/linux-arm64/ssh-portfolio ./cmd/server
 
-      - name: Compress Binaries
+      - name: Compress binaries
         run: |
           cd build
-          tar -czvf portfolio-linux-amd64.tar.gz linux-amd64
-          tar -czvf portfolio-linux-arm64.tar.gz linux-arm64 
-      
-      - name: Upload Binary Artifacts
+          tar -czvf ssh-portfolio-linux-amd64.tar.gz linux-amd64
+          tar -czvf ssh-portfolio-linux-arm64.tar.gz linux-arm64
+
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: binaries
           path: build/*.tar.gz
 
-      - name: Generate Release Tag
-        id: generate-tag
-        run: echo "RELEASE_TAG=$(date +'%d-%m-%Y')" > $GITHUB_ENV
+      - name: Generate release tag
+        run: echo "RELEASE_TAG=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
 
-      - name: Create Github Release
+      - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -54,6 +59,27 @@ jobs:
           name: "Release ${{ env.RELEASE_TAG }}"
           draft: true
           artifacts: |
-            build/portfolio-linux-amd64.tar.gz
-            build/portfolio-linux-arm64.tar.gz
+            build/ssh-portfolio-linux-amd64.tar.gz
+            build/ssh-portfolio-linux-arm64.tar.gz
 
+  docker:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}:latest
+            ghcr.io/${{ github.repository }}:${{ github.sha }}
