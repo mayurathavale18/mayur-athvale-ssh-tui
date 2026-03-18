@@ -3,7 +3,7 @@ BUILD_DIR=build
 CMD=./cmd/server
 DOCKER_IMAGE=ssh-portfolio
 
-.PHONY: build run clean test lint docker-build docker-run docker-up docker-down build-all
+.PHONY: build run clean test lint docker-build docker-run docker-up docker-down build-all deploy
 
 build:
 	go build -o $(BUILD_DIR)/$(BINARY_NAME) $(CMD)
@@ -41,3 +41,8 @@ build-linux-arm64:
 	GOOS=linux GOARCH=arm64 go build -ldflags="-s -w" -o $(BUILD_DIR)/$(BINARY_NAME)-linux-arm64 $(CMD)
 
 build-all: build-linux-amd64 build-linux-arm64
+
+# Deploy to EC2
+# Usage: make deploy EC2_HOST=<ip>  (EC2_USER, EC2_PORT, EC2_KEY are optional)
+deploy:
+	bash deploy/deploy.sh

@@ -83,3 +83,45 @@ jobs:
           tags: |
             ghcr.io/${{ github.repository }}:latest
             ghcr.io/${{ github.repository }}:${{ github.sha }}
+
+  deploy:
+    needs: build-and-release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.25"
+
+      - name: Build Linux amd64 binary
+        run: |
+          mkdir -p build
+          GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o build/ssh-portfolio-linux-amd64 ./cmd/server
+
+      - name: Copy binary to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: ${{ secrets.EC2_PORT }}
+          source: build/ssh-portfolio-linux-amd64
+          target: /tmp/
+
+      - name: Install and restart service
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: ${{ secrets.EC2_PORT }}
+          script: |
+            sudo systemctl stop ssh-portfolio
+            sudo cp /tmp/build/ssh-portfolio-linux-amd64 /opt/ssh-portfolio/ssh-portfolio
+            sudo chmod +x /opt/ssh-portfolio/ssh-portfolio
+            sudo chown portfolio:portfolio /opt/ssh-portfolio/ssh-portfolio
+            sudo systemctl start ssh-portfolio
+            sleep 1
+            sudo systemctl is-active --quiet ssh-portfolio && echo "Deploy successful" || (echo "Deploy failed" && exit 1)
+            rm -rf /tmp/build

@@ -41,4 +41,5 @@ type Contact struct {
 	LinkedIn string `yaml:"linkedin"`
 	Email    string `yaml:"email"`
 	Blog     string `yaml:"blog"`
+	Website  string `yaml:"website"`
 }

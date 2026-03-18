@@ -41,10 +41,10 @@ func RenderExperience(s theme.Styles, p content.Portfolio, width int, scrollOffs
 		}
 	}
 
-	return applyScroll(b.String(), scrollOffset)
+	return ApplyScroll(b.String(), scrollOffset)
 }
 
-func applyScroll(txt string, offset int) string {
+func ApplyScroll(txt string, offset int) string {
 	lines := strings.Split(txt, "\n")
 	if offset >= len(lines) {
 		offset = max(len(lines)-1, 0)

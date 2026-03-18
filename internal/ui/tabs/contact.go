@@ -23,6 +23,7 @@ func RenderContact(s theme.Styles, p content.Portfolio) string {
 		{"LinkedIn", p.Contact.LinkedIn, ">>"},
 		{"Email", p.Contact.Email, ">>"},
 		{"Blog", p.Contact.Blog, ">>"},
+		{"Website", p.Contact.Website, ">>"},
 	}
 
 	for _, link := range links {

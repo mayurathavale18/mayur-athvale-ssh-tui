@@ -160,20 +160,25 @@ func (m Model) tabContent() string {
 	p := m.portfolio
 	w := m.width
 
+	var content string
 	switch m.activeTab {
 	case 0:
-		return tabs.RenderAbout(s, p, w)
+		content = tabs.RenderAbout(s, p, w)
 	case 1:
-		return tabs.RenderExperience(s, p, w, m.scrollOffset)
+		content = tabs.RenderExperience(s, p, w, m.scrollOffset)
 	case 2:
-		return tabs.RenderProjects(s, p, w)
+		content = tabs.RenderProjects(s, p, w)
 	case 3:
-		return tabs.RenderSkills(s, p, w)
+		content = tabs.RenderSkills(s, p, w)
 	case 4:
-		return tabs.RenderContact(s, p)
+		content = tabs.RenderContact(s, p)
 	case 5:
-		return tabs.RenderStats(s, m.activeCount, m.stats, m.recentVisits, w)
+		content = tabs.RenderStats(s, m.activeCount, m.stats, m.recentVisits, w)
 	default:
 		return lipgloss.NewStyle().Foreground(theme.ColorMuted).Render("Unknown tab")
 	}
+	if m.activeTab != 1 {
+		content = tabs.ApplyScroll(content, m.scrollOffset)
+	}
+	return content
 }
