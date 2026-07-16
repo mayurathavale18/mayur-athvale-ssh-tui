@@ -41,9 +41,11 @@ type Model struct {
 	activeCount  int
 	stats        analytics.Stats
 	recentVisits []analytics.RecentVisit
+
+	contact contactForm
 }
 
-func NewModel(p content.Portfolio, width, height int, tracker *analytics.Tracker, visitID int64, renderer *lipgloss.Renderer) Model {
+func NewModel(p content.Portfolio, width, height int, tracker *analytics.Tracker, visitID int64, renderer *lipgloss.Renderer, tgBotToken, tgContactChatID string) Model {
 	return Model{
 		portfolio: p,
 		styles:    theme.NewStyles(renderer),
@@ -53,6 +55,7 @@ func NewModel(p content.Portfolio, width, height int, tracker *analytics.Tracker
 		height:    height,
 		tracker:   tracker,
 		visitID:   visitID,
+		contact:   newContactForm(tgBotToken, tgContactChatID),
 	}
 }
 
@@ -92,7 +95,25 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.stats = msg.Stats
 		m.recentVisits = msg.RecentVisits
 
+	case submitResultMsg:
+		var cmd tea.Cmd
+		m.contact, cmd = m.contact.update(msg)
+		return m, cmd
+
 	case tea.KeyMsg:
+		// On the Contact tab: once editing, the form owns every key except
+		// the hard-quit shortcut, so tab/h/j/k/l/digits get typed into
+		// fields instead of hijacked by global navigation. Before editing
+		// starts, only "enter" is intercepted (to focus the first field) --
+		// every other key still behaves like it does on any other tab.
+		if m.activeTab == 4 && !key.Matches(msg, m.keys.Quit) {
+			if m.contact.editing || msg.String() == "enter" {
+				var cmd tea.Cmd
+				m.contact, cmd = m.contact.update(msg)
+				return m, cmd
+			}
+		}
+
 		switch {
 		case key.Matches(msg, m.keys.Quit):
 			m.tracker.OnDisconnect(m.visitID)
@@ -171,7 +192,7 @@ func (m Model) tabContent() string {
 	case 3:
 		content = tabs.RenderSkills(s, p, w)
 	case 4:
-		content = tabs.RenderContact(s, p)
+		content = tabs.RenderContact(s, p) + "\n\n" + m.contact.view(s)
 	case 5:
 		content = tabs.RenderStats(s, m.activeCount, m.stats, m.recentVisits, w)
 	default:

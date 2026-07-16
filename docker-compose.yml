@@ -6,6 +6,10 @@ services:
     volumes:
       - ssh-keys:/app/.ssh
       - analytics-data:/app/data
+    environment:
+      # Contact tab form -> Telegram. Leave unset to disable the form.
+      - TG_BOT_TOKEN=${TG_BOT_TOKEN:-}
+      - TG_CONTACT_CHAT_ID=${TG_CONTACT_CHAT_ID:-}
     restart: unless-stopped
 
 volumes:

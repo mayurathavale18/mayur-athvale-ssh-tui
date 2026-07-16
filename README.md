@@ -15,6 +15,7 @@ ssh portfolio.mayurathavale.com
 - **Visitor analytics** — SQLite-backed tracking with live connection count, visit history, and IP privacy masking
 - **Content from YAML** — Portfolio data loaded from `content/portfolio.yaml`, embedded at compile time
 - **Env-based config** — `SSH_PORT`, `HOST_KEY_DIR`, `DB_PATH` for flexible deployment
+- **Contact form** — the Contact tab has a real form (name/email/company/message); submissions post to a Telegram bot via `TG_BOT_TOKEN`/`TG_CONTACT_CHAT_ID` (unset = form shows a clear "not configured" message instead of silently failing). Web3Forms/Formspree-style services reject non-browser submissions on their free tiers, which is why this goes straight to Telegram's API instead.
 - **Production-ready** — Dockerfile, systemd service, Terraform config, CI/CD with GHCR
 
 ## Quick Start

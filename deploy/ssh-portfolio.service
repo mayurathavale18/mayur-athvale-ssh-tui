@@ -16,6 +16,11 @@ Environment=SSH_HOST=0.0.0.0
 Environment=SSH_PORT=22
 Environment=HOST_KEY_DIR=/opt/ssh-portfolio/.ssh
 Environment=DB_PATH=/opt/ssh-portfolio/data/analytics.db
+# Contact tab: posts to a Telegram bot's sendMessage API (server-side --
+# Web3Forms and similar free-tier form services reject non-browser
+# submissions). Leave unset to disable the form with a clear in-TUI message.
+Environment=TG_BOT_TOKEN=
+Environment=TG_CONTACT_CHAT_ID=
 
 Restart=always
 RestartSec=5

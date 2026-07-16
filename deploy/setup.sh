@@ -108,6 +108,8 @@ Environment=SSH_HOST=0.0.0.0
 Environment=SSH_PORT=22
 Environment=HOST_KEY_DIR=/opt/ssh-portfolio/.ssh
 Environment=DB_PATH=/opt/ssh-portfolio/data/analytics.db
+Environment=TG_BOT_TOKEN=
+Environment=TG_CONTACT_CHAT_ID=
 
 Restart=always
 RestartSec=5

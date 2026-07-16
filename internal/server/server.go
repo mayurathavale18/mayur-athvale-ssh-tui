@@ -80,6 +80,8 @@ func (s *Server) teaHandler(sess ssh.Session) (tea.Model, []tea.ProgramOption) {
 		s.tracker,
 		visitID,
 		renderer,
+		s.cfg.TGBotToken,
+		s.cfg.TGContactChatID,
 	)
 
 	return m, []tea.ProgramOption{tea.WithAltScreen()}
