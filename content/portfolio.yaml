@@ -2,6 +2,7 @@ name: "Mayur Athavale"
 title: "Software Engineer"
 location: "Pune, India"
 
+# Canonical website PDF: update it once; this TUI link stays stable.
 resume: "https://mayurathavale.com/mayur_athavale_resume.pdf"
 
 about: |
