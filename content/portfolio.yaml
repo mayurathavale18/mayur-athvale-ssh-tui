@@ -2,8 +2,8 @@ name: "Mayur Athavale"
 title: "Software Engineer"
 location: "Pune, India"
 
-# Canonical website PDF: update it once; this TUI link stays stable.
-resume: "https://mayurathavale.com/mayur_athavale_resume.pdf"
+# Stable website endpoint opens the existing Drive resume.
+resume: "https://mayurathavale.com/resume"
 
 about: |
   Software Engineer with 1+ year building production AI and platform systems
@@ -37,6 +37,15 @@ experience:
       - "Collaborated in a small team to rapidly iterate on MVP features for rural adoption, focusing on low-bandwidth usability."
 
 projects:
+  - name: "Agent Bridge"
+    tech: "TypeScript, OpenWA, WhatsApp, Coding Agents, k3s"
+    description: |
+      Drive Command Code, Codex and Claude Code from WhatsApp through an
+      existing OpenWA gateway. A shared event contract carries progress,
+      responses and supported approval requests. Harnesses keep separate
+      histories; one active webhook receives new turns.
+      https://mayurathavale.com/projects/agent-bridge/
+
   - name: "Jobwatch"
     tech: "Go, Python, React, SQLite, Telegram, Gmail, k3s"
     description: |
@@ -85,6 +94,17 @@ projects:
 
       Architecture: https://mayurathavale.com/projects/jobwatch/
       Source: https://github.com/mayurathavale18/jobwatch
+
+  - name: "Hermes Plugin"
+    tech: "Python, Hermes Agent, OpenWA, WhatsApp"
+    description: |
+      Connect Hermes Agent to an existing OpenWA WhatsApp session. Signed
+      webhooks, duplicate and echo filtering, and operator-only self-chat
+      controls sit between OpenWA and the Hermes gateway. Agent Bridge and
+      Hermes share the gateway through one active webhook; histories stay
+      separate. Hermes supplies tools, skills and memory, while the plugin
+      handles transport and replies.
+      https://mayurathavale.com/projects/hermes-plugin/
 
   - name: "Terminal Portfolio"
     tech: "Go, BubbleTea, Wish, Contabo k3s"
