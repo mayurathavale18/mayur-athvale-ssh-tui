@@ -20,6 +20,11 @@ about: |
   find roles and prepare applications. I self-host these projects on my
   k3s cluster and write about what I learn.
 
+  I'm curious about the layers beneath the tools I use: low-level
+  systems, compilers, and the origins of programming languages. I like
+  understanding how code becomes something a machine can run, and why
+  languages work the way they do.
+
 experience:
   - role: "Software Development Engineer"
     company: "Zotok.ai"
