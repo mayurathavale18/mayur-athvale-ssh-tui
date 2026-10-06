@@ -15,9 +15,9 @@ import (
 	"mayur-athavale-tui/internal/ui/theme"
 )
 
-const (
-	telegramSendMessageURL = "https://api.telegram.org/bot%s/sendMessage"
+const telegramSendMessageURL = "https://api.telegram.org/bot%s/sendMessage"
 
+const (
 	fieldName = iota
 	fieldEmail
 	fieldCompany
@@ -262,6 +262,8 @@ func (f contactForm) view(s theme.Styles) string {
 		b.WriteString(s.Muted.Render("Press Enter to fill out a message."))
 		return b.String()
 	}
+	b.WriteString(s.Muted.Render("Editing message · Tab: next field · Esc: back · Ctrl+C: quit"))
+	b.WriteString("\n\n")
 
 	labelStyle := func(active bool) lipgloss.Style {
 		if active {
@@ -271,7 +273,7 @@ func (f contactForm) view(s theme.Styles) string {
 	}
 
 	row := func(label string, active bool, value string) string {
-		return fmt.Sprintf("%s\n%s\n", labelStyle(active).Render(label), value)
+		return fmt.Sprintf("%s: %s\n", labelStyle(active).Render(label), value)
 	}
 
 	b.WriteString(row("Name", f.focus == fieldName, f.name.View()))
