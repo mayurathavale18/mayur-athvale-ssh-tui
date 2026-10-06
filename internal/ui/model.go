@@ -21,8 +21,8 @@ type VisitorTickMsg time.Time
 
 // StatsMsg carries updated analytics data.
 type StatsMsg struct {
-	Active      int
-	Stats       analytics.Stats
+	Active       int
+	Stats        analytics.Stats
 	RecentVisits []analytics.RecentVisit
 }
 
@@ -102,12 +102,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tea.KeyMsg:
 		// On the Contact tab: once editing, the form owns every key except
-		// the hard-quit shortcut, so tab/h/j/k/l/digits get typed into
+		// Ctrl+C, so q/tab/h/j/k/l/digits get typed into
 		// fields instead of hijacked by global navigation. Before editing
 		// starts, only "enter" is intercepted (to focus the first field) --
 		// every other key still behaves like it does on any other tab.
-		if m.activeTab == 4 && !key.Matches(msg, m.keys.Quit) {
+		if m.activeTab == 4 && msg.String() != "ctrl+c" {
 			if m.contact.editing || msg.String() == "enter" {
+				m.scrollOffset = 0
 				var cmd tea.Cmd
 				m.contact, cmd = m.contact.update(msg)
 				return m, cmd
@@ -128,7 +129,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.scrollOffset = 0
 
 		case key.Matches(msg, m.keys.Down):
-			m.scrollOffset++
+			if lipgloss.Height(m.tabContent()) > 1 {
+				m.scrollOffset++
+			}
 
 		case key.Matches(msg, m.keys.Up):
 			if m.scrollOffset > 0 {
@@ -192,7 +195,11 @@ func (m Model) tabContent() string {
 	case 3:
 		content = tabs.RenderSkills(s, p, w)
 	case 4:
-		content = tabs.RenderContact(s, p) + "\n\n" + m.contact.view(s)
+		if m.contact.editing {
+			content = m.contact.view(s)
+		} else {
+			content = tabs.RenderContact(s, p) + "\n\n" + m.contact.view(s)
+		}
 	case 5:
 		content = tabs.RenderStats(s, m.activeCount, m.stats, m.recentVisits, w)
 	default:
